@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel='stylesheet' type='text/css' media='screen' href="{{ url_for('static', filename='css/login.css') }}">
+</head>
+<body>
+    <div class="container mt-5 mb-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h1 class="text-center">Login Page</h1>
+                        <div class="underline-title"></div>
+                    </div>
+                    <div class="card-body">
+                        <form action="" method="post" id="loginForm">
+                            {{form.hidden_tag()}}
+
+                            <div class="form-group">
+                                <label for="username">Username</label>
+                                {{form.username(class="form-control")}}
+                            </div>
+
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                {{form.password(class="form-control")}}
+                            </div>
+
+                                   
+                            {% with messages = get_flashed_messages() %}
+                                {% if messages %}
+                                    <div class="alert alert-danger">
+                                        <ul>
+                                            {% for message in messages %}
+                                                <li>{{ message }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                {% endif %}
+                            {% endwith %}
+
+                            <div class="form-group text-center">
+                                <!-- Add a button to open the modal -->
+                                <button type="button" class="btn btn-primary btn-block w-100" id="login-btn">
+                                    Login
+                                </button>
+                                
+                                <!-- The modal structure -->
+                                <div class="modal fade" id="captureModal" tabindex="-1" role="dialog" aria-labelledby="captureModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header text-center">
+                                                <h5 class="modal-title" id="captureModalLabel">Verifying Your Face</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <!-- Video preview -->
+                                                <div class="container">
+                                                    <div class="row">
+                                                        <div class="col-12 text-center"> <!-- Added text-center class here -->
+                                                            <video id="webcam" autoplay playsinline style="max-width: 100%; max-height: 100%; width: px; height:240px;"></video>
+                                                            <canvas id="canvas" class="d-none">
+                                                            </div>
+                                                        <div class="col-12 mt-2 text-center">
+                                                            <!-- <img src="" alt="" id="img-prev" class="img-fluid"> -->
+                                                            <p id="error-message" class="text-danger d-none"></p>
+                                                        </div>
+                                                        <div class="col-12 mt-3 text-center">
+                                                            <div class="form-group">
+                                                                {{form.submit(class="btn btn-primary d-none",id="formSubmit")}}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                        <p class="text-center">
+                            <a href="{{url_for('register')}}">Don't have an account? Sign up</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://unpkg.com/webcam-easy/dist/webcam-easy.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+        const webcamElement = document.getElementById('webcam');
+        const canvasElement = document.getElementById('canvas');
+        const webcam = new Webcam(webcamElement, 'user', canvasElement);
+        // const img = document.getElementById('img-prev')
+        let loginButton = document.getElementById('login-btn');
+        let captureModal = new bootstrap.Modal(document.getElementById('captureModal'));
+        const loginForm = document.getElementById('loginForm')
+        let cameraStream;
+
+        loginForm.addEventListener('keypress', (e)=> {
+            if(e.key === 'Enter'){
+                e.preventDefault()
+                // console.log('Enter pressed');
+                loginButton.click();
+            }
+        })
+
+
+        loginButton.addEventListener('click', () => {
+            let xhr = new XMLHttpRequest();
+            let data=JSON.stringify({username:loginForm.username.value, password:loginForm.password.value});
+            xhr.onreadystatechange = function() {
+                if(xhr.status === 200) {
+                    let response = JSON.parse(xhr.responseText);
+                    // console.log(xhr.responseText);
+                    if(response.message === 'found user'){
+                        // console.log(response.username);
+                        startCamera(); 
+                        captureModal.show(); 
+                        const intervalTime = 1000;
+
+                        const repetitions = 5;
+                        let currentRepetition = 0;
+
+                        const intervalId = setInterval(function () {
+                            captureFrame();
+                            currentRepetition++;
+                            if (currentRepetition >= repetitions) {
+                                clearInterval(intervalId);
+                                webcamElement.style.boxShadow = '0px 0px 20px 1px red';
+                            }
+                        }, intervalTime);
+                    } 
+                    else{
+                        // console.log(response.message)
+                    }
+                } else {
+                    // console.error(xhr.statusText);
+                }
+            }
+            xhr.open('POST', '/findUser', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            // Set up a callback function to handle the server's response
+            xhr.send(data);
+        });
+
+        $('#captureModal').on('hidden.bs.modal', function (e) {
+            // console.log('Model closed',e)
+            stopCamera(); 
+        });
+
+        function dataUriToBlob(dataUri) {
+            const splitDataUri = dataUri.split(',');
+            const type = splitDataUri[0].split(':')[1].split(';')[0];
+            const byteString = atob(splitDataUri[1]);
+            const arrayBuffer = new ArrayBuffer(byteString.length);
+            const uint8Array = new Uint8Array(arrayBuffer);
+
+            for (let i = 0; i < byteString.length; i++) {
+                uint8Array[i] = byteString.charCodeAt(i);
+            }
+
+            return new Blob([arrayBuffer], { type: type });
+        }
+        
+        function captureFrame() {
+            let picture = webcam.snap();
+            // console.log('Picture captured');
+
+            // webcamElement.style.display = 'none';
+            
+            // Convert the base64 image data to a Blob object
+            const blob = dataUriToBlob(picture);
+            
+            // Create a new File object from the Blob
+            const file = new File([blob], 'capturedImage.png', { type: 'image/png' });
+
+            // Create a new FileList containing the File object
+            const fileList = new DataTransfer();
+            fileList.items.add(file);
+
+            // Create a new file input element
+            const newInput = document.createElement('input');
+            newInput.type = 'file';
+            newInput.name = 'image';
+            newInput.style.display = 'none';
+            // Assign the FileList to the files property of the input element
+            newInput.files = fileList.files;
+
+            // Append the new input element to the form
+            const form = document.getElementById('loginForm');
+            form.appendChild(newInput);
+
+            // img.src = URL.createObjectURL(blob);
+            const errMsg = document.getElementById('error-message');
+            
+
+            let xhr = new XMLHttpRequest(),data=JSON.stringify({name:form.username.value, image:picture, source: 'login'});
+            xhr.onreadystatechange  = function () {
+                if (xhr.status === 200) {
+                    // Handle the server's response, e.g., display a message to the user
+                    // console.log(xhr.responseText);
+                    let response = JSON.parse(xhr.responseText);
+                    if(response.error) {
+                        if(response.error === 'No Face Detected'){
+                            errMsg.innerText = response.error;
+                            errMsg.style.display = 'block';
+                            errMsg.classList.remove('d-none')
+                            errMsg.classList.add('d-block')
+                        }
+                        // capButton = document.getElementById('capture-btn');
+                        // capButton.innerText = 'Recapture';
+                        // capButton.addEventListener('click', () => {
+                        //     webcamElement.style.display = 'block';
+                        //     errMsg.style.display = 'none';
+                        //     img.src = '#';
+                        // })
+                        // console.log(response.error);
+                    }
+                    else {
+                        // console.log(response.faceMatch)
+                        if(response.faceMatch === true){
+                            webcamElement.style.boxShadow = '0px 0px 20px 1px green';
+                            sessionStorage.setItem('username', form.username.value)
+                            document.getElementById('formSubmit').click()
+                        } else {
+                            webcamElement.style.boxShadow = '0px 0px 20px 1px red';
+                        }
+                        // let processedImageBase64 = response.processed_image;
+                        // img.src = 'data:image/png;base64,' + processedImageBase64;
+                        // webcamElement.style.display = 'none';
+                        errMsg.classList.add('d-none')
+                        errMsg.classList.remove('d-block')
+                        // const submitModal = document.getElementById('submitModal-btn');
+                        // const registerButton = document.getElementById('loginButton')
+        
+                        // captureButton.classList.add('disabled')
+                        // submitModal.classList.remove('disabled')
+                        // registerButton.classList.remove('disabled')
+                        // registerButton.style.pointerEvents = "auto";
+                    }
+                
+                } else {
+                    // Handle errors
+                    // console.error('Error processing image:', xhr.statusText);
+                }
+            };
+
+            xhr.open('POST', '/verifyFace', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            // Set up a callback function to handle the server's response
+            xhr.send(data);
+        }
+        
+
+        async function startCamera() {
+            await webcam.start()
+            .then(result =>{
+                // console.log("webcam started");
+            })
+            .catch(err => {
+                // console.log(err);
+            });
+        }
+
+        async function stopCamera() {
+            await webcam.stop();
+        }
+
+        function adjustModalSize() {
+            const videoRatio = webcam.getAspectRatio();
+            const modalBody = document.querySelector('.modal-body');
+            const modalHeader = document.querySelector('.modal-header');
+            const modalFooter = document.querySelector('.modal-footer');
+            const modalContent = document.querySelector('.modal-content');
+            const videoHeight =  videoRatio;
+            modalBody.style.maxHeight = `${videoHeight}px`;
+            const modalHeight =  modalBody.offsetHeight ;
+            modalContent.style.height = `${modalHeight}px`;
+        }
+    });
+    </script>
+</body>
+</html>

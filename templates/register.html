@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel='stylesheet' type='text/css' media='screen' href="{{ url_for('static', filename='css/signup.css') }}">
+</head>
+<body>
+    <div class="container mt-5 mb-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h1 class="text-center">Register Page</h1>
+                        <div class="underline-title"></div>
+                    </div>
+                    <div class="card-body">
+                        <form action="" method="post" enctype="multipart/form-data" id="registrationForm">
+                            {{form.hidden_tag()}}
+
+                            <div class="form-group">
+                                <label for="username">Username</label>
+                                {{form.username(class="form-control")}}
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                {{form.email(class="form-control")}}
+                            </div>
+
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                {{form.password(class="form-control")}}
+                            </div>
+
+                            <div class="form-group text-center">
+                                <!-- Add a button to open the modal -->
+                                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#captureModal" id="register-face-btn">
+                                    Register Face 
+                                </button>
+                                
+                                <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="30" height="30" viewBox="0 0 48 48" id="tick-icon" style="display: none;">
+                                    <path fill="#c8e6c9" d="M36,42H12c-3.314,0-6-2.686-6-6V12c0-3.314,2.686-6,6-6h24c3.314,0,6,2.686,6,6v24C42,39.314,39.314,42,36,42z"></path><path fill="#4caf50" d="M34.585 14.586L21.014 28.172 15.413 22.584 12.587 25.416 21.019 33.828 37.415 17.414z"></path>
+                                    </svg>
+                            
+                                <!-- The modal structure -->
+                                <div class="modal fade" id="captureModal" tabindex="-1" role="dialog" aria-labelledby="captureModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="captureModalLabel">Capture Your Face</h5>
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <!-- Video preview -->
+                                                <div class="container">
+                                                    <div class="row">
+                                                        <div class="col-12 text-center"> <!-- Added text-center class here -->
+                                                            <video id="webcam" autoplay playsinline style="max-width: 100%; max-height: 100%; width: px; height:240px;"></video>
+                                                            <img src="" alt="" id="img-prev" class="img-fluid">
+                                                            <canvas id="canvas" class="d-none">
+                                                        </div>
+                                                        <div class="col-12 mt-2 text-center">
+                                                            <p id="error-message" class="text-danger d-none"></p>
+                                                        </div>
+                                                        <div class="col-12 mt-3 text-center">
+                                                            <button type="button" id="capture-btn" class="btn btn-success"> Capture </button>
+                                                            <button type="button" id="submitModal-btn" class="btn btn-success disabled" data-dismiss="modal" aria-label="Close" style="pointer-events: none;"> Submit </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            {% with messages = get_flashed_messages() %}
+                                {% if messages %}
+                                    <div class="alert alert-danger">
+                                        <ul>
+                                            {% for message in messages %}
+                                                <li>{{ message }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </div>
+                                {% endif %}
+                            {% endwith %}
+
+                            <div class="form-group">
+                                {{form.submit(class="btn btn-primary btn-block disabled", id="registerButton", style="pointer-events:none;")}}
+                            </div>
+                        </form>
+
+                        <p class="text-center">
+                            <a href="{{url_for('login')}}">Already have an account? Login</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://unpkg.com/webcam-easy/dist/webcam-easy.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/register.js') }}"></script>
+    <!-- <link rel="stylesheet" href="signup.css"> -->
+</body>
+</html>
