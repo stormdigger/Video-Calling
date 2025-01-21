@@ -7,15 +7,15 @@
     <title>Room</title>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel='stylesheet' type='text/css' media='screen' href="{{ url_for('static', filename='css/main.css') }}">
-    <link rel='stylesheet' type='text/css' media='screen' href="{{ url_for('static', filename='css/lobby.css') }}">
+    <link rel='stylesheet' type='text/css' media='screen' href="../static/main.css">
+    <link rel='stylesheet' type='text/css' media='screen' href="../static/lobby.css">
 </head>
 
 <body>
 
     <header id="nav">
         <div class="nav--list">
-            <a href="{{ url_for('index') }}">
+            <a href="index.html">
                 <h3 id="logo">
                     <img src="../static/images/logo.png" alt="Face Meet" class="img img-fluid">
                 </h3>
@@ -27,7 +27,7 @@
                 <div id="user">Hello User</div>
                 <div class="underline-title"></div>
             </a>
-            <a class="nav__link" href="{{ url_for('logout') }}">
+            <a class="nav__link" href="logout.html">
                 Logout
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#ede0e0"
                     viewBox="0 0 24 24">
@@ -154,7 +154,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 <script type="text/javascript" src="https://unpkg.com/webcam-easy/dist/webcam-easy.min.js"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='js/main.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('static', filename='js/lobby.js') }}"></script>
+<script type="text/javascript" src="../static/js/main.js"></script>
+<script type="text/javascript" src="../static/js/lobby.js"></script>
 
 </html>
