@@ -5,7 +5,7 @@ Flask_Login==0.6.3
 Flask_PyMongo==2.3.0
 flask_wtf==1.2.2
 keyboard==0.13.5
-mediapipe==0.10.9
+mediapipe
 numpy==2.2.2
 opencv_contrib_python==4.8.1.78
 opencv_python==4.8.1.78
