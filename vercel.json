@@ -1,9 +1,18 @@
 {
-  "version":2,
+  "version": 2,
   "builds": [
-    {"src": "app.py", "use":"@vercel/python"}
+    {
+      "src": "app.py",
+      "use": "@vercel/python",
+      "config": {
+        "buildCommand": "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && export PATH=$HOME/.cargo/bin:$PATH && pip install --disable-pip-version-check --target . --upgrade -r requirements.txt"
+      }
+    }
   ],
-  "routes":[
-    {"src": "/(.*)", "dest":"app.py"}
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "app.py"
+    }
   ]
 }
