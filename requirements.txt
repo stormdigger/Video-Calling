@@ -2,8 +2,6 @@ absl-py
 alembic
 aniso8601
 anyio
-argon2-cffi
-argon2-cffi-bindings
 arrow
 asttokens
 astunparse
@@ -65,8 +63,6 @@ grpcio
 gunicorn
 h11
 h5py
-httpcore
-httpx
 idna
 importlib_resources
 ipykernel
